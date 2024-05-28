@@ -4,46 +4,54 @@ body {
     padding: 0;
     background-color: #f4f4f4;
     color: #333;
-    transition: background-color 0.3s, color 0.3s;
-}
-
-body.dark-mode {
-    background-color: #121212;
-    color: #ffffff;
 }
 
 .container {
-    max-width: 600px;
+    max-width: 800px;
     margin: 20px auto;
     background-color: #fff;
     padding: 20px;
     border-radius: 5px;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    transition: background-color 0.3s, color 0.3s;
 }
 
-.container.dark-mode {
-    background-color: #1e1e1e;
+.input-section {
+    margin-bottom: 20px;
 }
 
 h1 {
     text-align: center;
+    margin-bottom: 20px;
 }
 
-.todo-input, .todo-time {
+.todo-input {
     width: 100%;
     padding: 10px;
     font-size: 16px;
     border: 1px solid #ddd;
     border-radius: 5px;
-    margin-bottom: 10px;
     box-sizing: border-box;
+    margin-bottom: 10px;
 }
 
-.todo-input.dark-mode, .todo-time.dark-mode {
-    background-color: #333;
-    color: #fff;
-    border-color: #555;
+.todo-list-section,
+.archived-section {
+    margin-bottom: 20px;
+}
+
+h2 {
+    margin-bottom: 10px;
+    font-size: 1.2em;
+    border-bottom: 1px solid #ddd;
+    padding-bottom: 5px;
+}
+
+.todo-list,
+.archived-list {
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    padding: 10px;
+    background-color: #f9f9f9;
 }
 
 .todo-item {
@@ -52,13 +60,23 @@ h1 {
     justify-content: space-between;
     padding: 10px;
     border-bottom: 1px solid #ddd;
-    background-color: #f9f9f9;
+    background-color: #fff;
     margin-bottom: 5px;
     border-radius: 5px;
 }
 
 .todo-item:last-child {
     border-bottom: none;
+    margin-bottom: 0;
+}
+
+.todo-item span {
+    flex-grow: 1;
+    margin-left: 10px;
+}
+
+.todo-item input[type="checkbox"] {
+    margin-right: 10px;
 }
 
 .todo-item .delete-btn {
@@ -66,37 +84,18 @@ h1 {
     cursor: pointer;
 }
 
-.toggle-btn {
-    background-color: #007bff;
-    color: white;
-    border: none;
-    padding: 10px;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.3s;
-    display: block;
-    margin: 10px auto;
-}
-
-.toggle-btn:hover {
-    background-color: #0056b3;
-}
-
-.toggle-btn.dark-mode {
-    background-color: #444;
-}
-
-@media (max-width: 600px) {
+@media (max-width: 800px) {
     .container {
-        margin: 10px;
-        padding: 15px;
+        padding: 10px;
     }
 
-    .todo-input, .todo-time {
-        font-size: 14px;
+    .todo-input,
+    .todo-list,
+    .archived-list {
+        padding: 5px;
     }
 
-    .toggle-btn {
-        padding: 8px;
+    .todo-item {
+        padding: 5px;
     }
 }

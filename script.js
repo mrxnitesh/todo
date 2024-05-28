@@ -1,68 +1,66 @@
 document.addEventListener('DOMContentLoaded', function() {
     const todoInput = document.querySelector('.todo-input');
-    const todoTime = document.querySelector('.todo-time');
     const todoList = document.querySelector('.todo-list');
-    const toggleBtn = document.getElementById('toggle-btn');
-    const prefersDarkScheme = window.matchMedia("(prefers-color-scheme: dark)");
+    const archivedList = document.querySelector('.archived-list');
+
+    // Request Notification permission on page load
+    if (Notification.permission !== 'granted') {
+        Notification.requestPermission().then(permission => {
+            if (permission === 'granted') {
+                console.log('Notification permission granted.');
+            }
+        });
+    }
 
     // Load saved todos from local storage
     const savedTodos = JSON.parse(localStorage.getItem('todos')) || [];
-    savedTodos.forEach(todo => addTodoItem(todo.text, todo.time, false));
-
-    // Load theme preference from local storage
-    const currentTheme = localStorage.getItem('theme');
-    if (currentTheme === 'dark' || (currentTheme === null && prefersDarkScheme.matches)) {
-        document.body.classList.toggle('dark-mode');
-        toggleBtn.textContent = "Light Mode";
-    }
-
-    toggleBtn.addEventListener('click', function() {
-        document.body.classList.toggle('dark-mode');
-        const theme = document.body.classList.contains('dark-mode') ? 'dark' : 'light';
-        toggleBtn.textContent = theme === "dark" ? "Light Mode" : "Dark Mode";
-        localStorage.setItem('theme', theme);
-    });
+    savedTodos.forEach(todo => addTodoItem(todo.text, todo.done, false));
 
     todoInput.addEventListener('keypress', function(e) {
         if (e.key === 'Enter') {
             const todoText = todoInput.value.trim();
-            const todoTimeValue = todoTime.value;
             if (todoText !== '') {
-                addTodoItem(todoText, todoTimeValue, true);
+                addTodoItem(todoText, false, true);
                 todoInput.value = '';
-                todoTime.value = '';
             }
         }
     });
 
-    function addTodoItem(todoText, todoTimeValue, save) {
+    function addTodoItem(todoText, done, save) {
         const todoItem = document.createElement('div');
         todoItem.classList.add('todo-item');
         todoItem.innerHTML = `
+            <input type="checkbox" ${done ? 'checked' : ''}>
             <span>${todoText}</span>
-            <span>${todoTimeValue}</span>
             <span class="delete-btn">&#10006;</span>
         `;
-        todoList.appendChild(todoItem);
+        (done ? archivedList : todoList).appendChild(todoItem);
+
+        const checkbox = todoItem.querySelector('input[type="checkbox"]');
+        checkbox.addEventListener('change', function() {
+            if (checkbox.checked) {
+                archiveTodoItem(todoItem);
+            } else {
+                unarchiveTodoItem(todoItem);
+            }
+        });
 
         const deleteBtn = todoItem.querySelector('.delete-btn');
         deleteBtn.addEventListener('click', function() {
-            todoItem.remove();
-            removeTodoItem(todoText);
+            if (confirm('Are you sure you want to delete this todo?')) {
+                todoItem.remove();
+                removeTodoItem(todoText);
+            }
         });
 
         if (save) {
-            saveTodoItem(todoText, todoTimeValue);
-        }
-
-        if (todoTimeValue) {
-            scheduleNotification(todoText, todoTimeValue);
+            saveTodoItem(todoText, done);
         }
     }
 
-    function saveTodoItem(todoText, todoTimeValue) {
+    function saveTodoItem(todoText, done) {
         const todos = JSON.parse(localStorage.getItem('todos')) || [];
-        todos.push({ text: todoText, time: todoTimeValue });
+        todos.push({ text: todoText, done: done });
         localStorage.setItem('todos', JSON.stringify(todos));
     }
 
@@ -72,24 +70,41 @@ document.addEventListener('DOMContentLoaded', function() {
         localStorage.setItem('todos', JSON.stringify(updatedTodos));
     }
 
-    function scheduleNotification(todoText, todoTimeValue) {
-        const time = new Date(todoTimeValue).getTime() - new Date().getTime();
-        if (time > 0) {
-            setTimeout(() => {
-                if (Notification.permission === 'granted') {
-                    new Notification('Todo Reminder', {
-                        body: todoText,
-                    });
-                } else if (Notification.permission !== 'denied') {
-                    Notification.requestPermission().then(permission => {
-                        if (permission === 'granted') {
-                            new Notification('Todo Reminder', {
-                                body: todoText,
-                            });
-                        }
-                    });
-                }
-            }, time);
+    function archiveTodoItem(todoItem) {
+        const todoText = todoItem.querySelector('span').textContent;
+        todoItem.remove();
+        addTodoItem(todoText, true, true);
+    }
+
+    function unarchiveTodoItem(todoItem) {
+        const todoText = todoItem.querySelector('span').textContent;
+        todoItem.remove();
+        addTodoItem(todoText, false, true);
+    }
+
+    // Example function to trigger a notification for demonstration purposes
+    function triggerNotification(todoText) {
+        if (Notification.permission === 'granted') {
+            new Notification('Todo Reminder', {
+                body: todoText,
+            });
         }
     }
+
+    // Example: Trigger a notification 5 seconds after adding a todo item
+    function scheduleNotification(todoText) {
+        setTimeout(() => {
+            triggerNotification(todoText);
+        }, 5000); // Change this time as needed
+    }
+
+    // Add event listener to trigger notification on adding todo item
+    todoInput.addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            const todoText = todoInput.value.trim();
+            if (todoText !== '') {
+                scheduleNotification(todoText);
+            }
+        }
+    });
 });

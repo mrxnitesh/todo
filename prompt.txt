@@ -1,0 +1,4 @@
+i have an single html file containing all of my code. split into css and javascript files.
+Make my website responsive for all devices. add some extra styling and preety good colors. 
+Make website looks amazing. and add a toggle button to light mode to dark mode, 
+and add a feature in this website to notification to user when their time come to do that task.

@@ -8,11 +8,18 @@
 </head>
 <body>
     <div class="container">
-        <h1>Todo List</h1>
-        <button class="toggle-btn" id="toggle-btn">Dark Mode</button>
-        <input type="text" class="todo-input" placeholder="Add new todo...">
-        <input type="datetime-local" class="todo-time" placeholder="Set time...">
-        <div class="todo-list"></div>
+        <div class="input-section">
+            <h1>Todo List</h1>
+            <input type="text" class="todo-input" placeholder="Add new todo...">
+        </div>
+        <div class="todo-list-section">
+            <h2>To Do</h2>
+            <div class="todo-list"></div>
+        </div>
+        <div class="archived-section">
+            <h2>Archived</h2>
+            <div class="archived-list"></div>
+        </div>
     </div>
     <script src="script.js"></script>
 </body>
