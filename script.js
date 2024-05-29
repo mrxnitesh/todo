@@ -1,110 +1,100 @@
-document.addEventListener('DOMContentLoaded', function() {
-    const todoInput = document.querySelector('.todo-input');
-    const todoList = document.querySelector('.todo-list');
-    const archivedList = document.querySelector('.archived-list');
+// Function to handle login
+function login() {
+    const username = document.getElementById('username').value.trim();
+    if (username !== '') {
+        localStorage.setItem('username', username);
+        document.getElementById('authentication').style.display = 'none';
+        document.getElementById('todo-form').style.display = 'block';
+        loadTasks();
+    }
+}
 
-    // Request Notification permission on page load
-    if (Notification.permission !== 'granted') {
-        Notification.requestPermission().then(permission => {
-            if (permission === 'granted') {
-                console.log('Notification permission granted.');
-            }
+// Function to add a task
+function addTask(taskText, completed = false) {
+    const li = document.createElement('li');
+    li.innerHTML = `
+        <span>${taskText}</span>
+        <button class="delete-btn">Delete</button>
+    `;
+    const targetList = completed ? document.getElementById('completed-task-list') : document.getElementById('task-list');
+    targetList.appendChild(li);
+    if (completed) {
+        li.classList.add('completed');
+    }
+    li.querySelector('.delete-btn').addEventListener('click', function () {
+        li.remove();
+        saveTasks();
+    });
+}
+
+// Function to save tasks to localStorage
+function saveTasks() {
+    const tasks = [];
+    document.querySelectorAll('#task-list li, #completed-task-list li').forEach(function (task) {
+        tasks.push({
+            text: task.querySelector('span').innerText,
+            completed: task.classList.contains('completed')
+        });
+    });
+    localStorage.setItem('tasks', JSON.stringify(tasks));
+}
+
+// Function to load tasks from localStorage
+function loadTasks() {
+    const savedTasks = localStorage.getItem('tasks');
+    if (savedTasks) {
+        const tasks = JSON.parse(savedTasks);
+        tasks.forEach(function (task) {
+            addTask(task.text, task.completed);
         });
     }
+}
 
-    // Load saved todos from local storage
-    const savedTodos = JSON.parse(localStorage.getItem('todos')) || [];
-    savedTodos.forEach(todo => addTodoItem(todo.text, todo.done, false));
+document.addEventListener('DOMContentLoaded', function () {
+    const form = document.getElementById('todo-form');
+    const input = document.getElementById('task-input');
 
-    todoInput.addEventListener('keypress', function(e) {
-        if (e.key === 'Enter') {
-            const todoText = todoInput.value.trim();
-            if (todoText !== '') {
-                addTodoItem(todoText, false, true);
-                todoInput.value = '';
-            }
+    // Check if user is logged in and load tasks
+    const username = localStorage.getItem('username');
+    if (username) {
+        document.getElementById('authentication').style.display = 'none';
+        document.getElementById('todo-form').style.display = 'block';
+        loadTasks();
+    }
+
+    window.addEventListener('beforeunload', function () {
+        // Save tasks before page refresh
+        saveTasks();
+    });
+
+    form.addEventListener('submit', function (event) {
+        event.preventDefault();
+        const taskText = input.value.trim();
+        if (taskText !== '') {
+            addTask(taskText);
+            input.value = '';
+            saveTasks();
         }
     });
 
-    function addTodoItem(todoText, done, save) {
-        const todoItem = document.createElement('div');
-        todoItem.classList.add('todo-item');
-        todoItem.innerHTML = `
-            <input type="checkbox" ${done ? 'checked' : ''}>
-            <span>${todoText}</span>
-            <span class="delete-btn">&#10006;</span>
-        `;
-        (done ? archivedList : todoList).appendChild(todoItem);
-
-        const checkbox = todoItem.querySelector('input[type="checkbox"]');
-        checkbox.addEventListener('change', function() {
-            if (checkbox.checked) {
-                archiveTodoItem(todoItem);
-            } else {
-                unarchiveTodoItem(todoItem);
-            }
-        });
-
-        const deleteBtn = todoItem.querySelector('.delete-btn');
-        deleteBtn.addEventListener('click', function() {
-            if (confirm('Are you sure you want to delete this todo?')) {
-                todoItem.remove();
-                removeTodoItem(todoText);
-            }
-        });
-
-        if (save) {
-            saveTodoItem(todoText, done);
+    // Add click event listener to each task item in task list
+    document.getElementById('task-list').addEventListener('click', function (event) {
+        const task = event.target.closest('li');
+        if (task && task.parentElement === document.getElementById('task-list')) {
+            task.classList.toggle('completed');
+            document.getElementById('completed-task-list').appendChild(task);
+            saveTasks();
         }
-    }
+    });
 
-    function saveTodoItem(todoText, done) {
-        const todos = JSON.parse(localStorage.getItem('todos')) || [];
-        todos.push({ text: todoText, done: done });
-        localStorage.setItem('todos', JSON.stringify(todos));
-    }
-
-    function removeTodoItem(todoText) {
-        const todos = JSON.parse(localStorage.getItem('todos')) || [];
-        const updatedTodos = todos.filter(todo => todo.text !== todoText);
-        localStorage.setItem('todos', JSON.stringify(updatedTodos));
-    }
-
-    function archiveTodoItem(todoItem) {
-        const todoText = todoItem.querySelector('span').textContent;
-        todoItem.remove();
-        addTodoItem(todoText, true, true);
-    }
-
-    function unarchiveTodoItem(todoItem) {
-        const todoText = todoItem.querySelector('span').textContent;
-        todoItem.remove();
-        addTodoItem(todoText, false, true);
-    }
-
-    // Example function to trigger a notification for demonstration purposes
-    function triggerNotification(todoText) {
-        if (Notification.permission === 'granted') {
-            new Notification('Todo Reminder', {
-                body: todoText,
-            });
-        }
-    }
-
-    // Example: Trigger a notification 5 seconds after adding a todo item
-    function scheduleNotification(todoText) {
-        setTimeout(() => {
-            triggerNotification(todoText);
-        }, 5000); // Change this time as needed
-    }
-
-    // Add event listener to trigger notification on adding todo item
-    todoInput.addEventListener('keypress', function(e) {
-        if (e.key === 'Enter') {
-            const todoText = todoInput.value.trim();
-            if (todoText !== '') {
-                scheduleNotification(todoText);
-            }
+    // Add click event listener to each task item in completed task list
+    document.getElementById('completed-task-list').addEventListener('click', function (event) {
+        const task = event.target.closest('li');
+        if (task && task.parentElement === document.getElementById('completed-task-list')) {
+            task.classList.toggle('completed');
+            document.getElementById('task-list').appendChild(task);
+            saveTasks();
         }
     });
 });
+

@@ -8,19 +8,21 @@
 </head>
 <body>
     <div class="container">
-        <div class="input-section">
-            <h1>Todo List</h1>
-            <input type="text" class="todo-input" placeholder="Add new todo...">
+        <h1>Todo List</h1>
+        <div id="authentication">
+            <input type="text" id="username" placeholder="Enter your username">
+            <button onclick="login()">Login</button>
         </div>
-        <div class="todo-list-section">
-            <h2>To Do</h2>
-            <div class="todo-list"></div>
-        </div>
-        <div class="archived-section">
-            <h2>Archived</h2>
-            <div class="archived-list"></div>
-        </div>
+        <form id="todo-form" style="display: none;">
+            <input type="text" id="task-input" placeholder="Add a task...">
+            <button type="submit">Add Task</button>
+        </form>
+        <h2>Tasks</h2>
+        <ul id="task-list"></ul>
+        <h2>Completed Tasks</h2>
+        <ul id="completed-task-list"></ul>
     </div>
+
     <script src="script.js"></script>
 </body>
 </html>
