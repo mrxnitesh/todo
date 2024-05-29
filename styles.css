@@ -1,44 +1,63 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap');
+
 body {
     font-family: 'Roboto', sans-serif;
-    background-color: #f7f7f7;
+    background: linear-gradient(135deg, #ff6b6b, #f06595, #cc5de8, #845ef7, #5c7cfa, #339af0, #22b8cf, #20c997, #51cf66, #94d82d, #fcc419, #ff922b);
+    background-size: 300% 300%;
+    animation: gradientAnimation 15s ease infinite;
     margin: 0;
     padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
 }
 
+@keyframes gradientAnimation {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
 
 .container {
     max-width: 90%;
+    width: 500px;
     margin: 20px auto;
-    background-color: #fff;
+    background-color: rgba(255, 255, 255, 0.8);
     padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+    border-radius: 15px;
+    box-shadow: 0 8px 32px rgba(31, 38, 135, 0.37);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
 }
 
 h1 {
     text-align: center;
     color: #333;
     margin-bottom: 20px;
+    font-weight: 700;
 }
 
 h2 {
     margin-top: 30px;
     color: #555;
+    font-weight: 500;
 }
 
 form {
     display: flex;
     margin-top: 20px;
-    align-items: flex-start; /* Ensure items are aligned at the top */
+    align-items: flex-start;
 }
 
 #task-input {
-    flex: 1; /* Let the input box take remaining space */
+    flex: 1;
     padding: 12px;
     font-size: 16px;
     border: none;
     border-radius: 5px 0 0 5px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    background: rgba(255, 255, 255, 0.6);
 }
 
 #todo-form button[type="submit"] {
@@ -50,6 +69,7 @@ form {
     border-radius: 0 5px 5px 0;
     cursor: pointer;
     transition: background-color 0.3s ease, transform 0.2s ease;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 }
 
 #todo-form button[type="submit"]:hover {
@@ -60,23 +80,26 @@ form {
 ul {
     list-style-type: none;
     padding: 0;
+    margin-top: 20px;
 }
 
 li {
     padding: 15px;
-    border-radius: 5px;
-    background-color: #f9f9f9;
+    border-radius: 10px;
+    background-color: rgba(249, 249, 249, 0.8);
     margin-top: 10px;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
     cursor: pointer;
     transition: background-color 0.3s ease, transform 0.2s ease;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
 }
 
 li:hover {
-    background-color: #eaeaea;
+    background-color: rgba(234, 234, 234, 0.8);
     transform: translateY(-3px);
 }
 
@@ -102,8 +125,7 @@ li:hover {
 
 @media only screen and (max-width: 768px) {
     #task-input {
-        flex: 1 0 auto; /* Allowing the input to take full width on smaller screens */
-        max-width: none; /* Removing the maximum width limit */
+        flex: 1 0 auto;
+        max-width: none;
     }
 }
-
